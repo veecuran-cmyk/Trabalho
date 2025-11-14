@@ -1,14 +1,13 @@
-Body {
+body {
   font-family: 'Times New Roman', serif;
   background-color: #f5e6c7;
   color: #3d3429;
-  text-align: center; /* Default text alignment for readability */
+  text-align: center; /* Alinha o conteúdo centralmente (incluindo botões e imagem) */
   box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
   padding: 15px; /* Base padding for all screens */
   line-height: 1.6;
   font-size: 16px;
   margin: 0;
-  /* Max width is removed from here to allow it to be set in the media query */
 }
 
 mark {
@@ -25,13 +24,18 @@ hr {
   margin: 15px auto;
 }
 
+/* ESTILOS DE BOTÃO PARA MOBILE (Padrão) */
 button {
   background-color: #7a6652;
   color: #f5e6c7;
   border: 2px solid #3d3429;
   padding: 10px 18px;
-  margin: 8px auto;
-  display: block; /* Default to block for better touch targets on mobile */
+  /* Margem ajustada para permitir que dois fiquem lado a lado */
+  margin: 8px;
+  
+  /* Permite que os botões fiquem lado a lado (para a pirâmide) */
+  display: inline-block; 
+  
   max-width: 250px;
   font-family: 'Georgia', serif;
   font-size: 16px;
@@ -41,6 +45,15 @@ button {
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* CLASSE PARA CENTRALIZAR O BOTÃO INFERIOR NO MOBILE */
+.center-button {
+  /* Força a quebra de linha após os dois primeiros botões */
+  display: block; 
+  /* Centraliza este bloco */
+  margin: 8px auto; 
+  max-width: 250px; 
 }
 
 button:hover {
@@ -76,13 +89,14 @@ img:active {
   box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3);
 }
 
-/* Styles for larger screens (e.g., tablets and desktops) */
+/* --- ESTILOS PARA TELAS MAIORES (Desktop/Tablet) --- */
 @media (min-width: 768px) {
   body {
     padding: 30px;
     max-width: 800px; /* Constrain width on large screens for better reading */
     margin: 30px auto;
-    /* text-align: center isremoved to keep it left-aligned for readability */
+    /* text-align: center já está definido acima para centralizar o body, 
+       então ele não precisa ser removido/alterado aqui. */
   }
 
   hr {
@@ -91,11 +105,19 @@ img:active {
   }
 
   button {
+    /* Retorna a margem original para o desktop */
     margin: 10px 15px;
     max-width: none;
+  }
+  
+  /* Garante que o container do botão central se comporte como os demais no desktop */
+  .center-button {
+      display: inline-block; 
+      margin: 10px 15px;
+      max-width: none;
   }
   
   img:hover {
     transform: scale(1.01); /* Subtle hover effect on desktop */
   }
-}
+    }
