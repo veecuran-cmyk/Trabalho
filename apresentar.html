@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hilda Hilst: Documento Arquivado</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', Times, serif; 
+            background-color: #f8f4e3; 
+            color: #4a4a4a; 
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 2px solid #a38d6d;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+
+        h1, h2 {
+            color: #8c7355; 
+            font-family: Georgia, serif;
+        }
+
+        .document-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px;
+            background-color: #fffaf0; 
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1); 
+        }
+
+        .anotacao-container {
+            background-color: #fff9c4; 
+            padding: 10px;
+            border-left: 5px solid #ffcc80;
+            cursor: default;
+        }
+
+        .texto-oculto {
+            color: transparent; 
+            background-color: #ffd600; 
+            transition: color 0.5s ease;
+        }
+
+        .anotacao-container:hover .texto-oculto,
+        .texto-oculto:focus,
+        .texto-oculto::selection {
+            color: #4a4a4a; 
+            background-color: #ffd600;
+        }
+        
+        .anotacao-container p {
+            margin: 0;
+        }
+
+        .modo-contraste {
+            background-color: #1a1a1a; 
+            color: #f8f4e3; 
+        }
+
+        .modo-contraste h1, .modo-contraste h2 {
+            color: #ffff00; 
+        }
+        
+        .modo-contraste .document-container {
+            background-color: #333;
+        }
+        
+        .modo-contraste .anotacao-container {
+            background-color: #444;
+            border-left: 5px solid #ffff00;
+        }
+
+        .btn-popup, .btn-tema, .btn-image-popup {
+            background-color: #8c7355;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-bottom: 20px;
+            display: inline-block; /* Para botões ficarem lado a lado */
+        }
+        
+        .btn-tema {
+            background-color: #4a4a4a;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+
+        .btn-image-popup {
+            padding: 5px 10px;
+            font-size: 12px;
+            margin-top: 5px;
+            background-color: #6d5f47;
+        }
+
+        .modal {
+            display: none; 
+            position: fixed;
+            z-index: 10;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4); 
+        }
+
+        .modal-content {
+            background-color: #f8f4e3; 
+            margin: 15% auto; 
+            padding: 20px;
+            border: 3px dashed #a38d6d; 
+            width: 80%;
+            max-width: 400px;
+            position: relative;
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+        }
+
+        .fechar-popup {
+            color: #a38d6d;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .fechar-popup:hover,
+        .fechar-popup:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .image-wrapper {
+            text-align: center;
+            margin: 20px 0;
+            background-color: #f0ede1;
+            padding: 10px;
+            border: 1px solid #d3c4a8;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.05);
+        }
+        .image-wrapper img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto 10px auto;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Arquivo 2025-HH: Hilda Hilst</h1>
+        <p>Documento de Análise e Contexto</p>
+    </header>
+
+    <main class="document-container">
+        <div style="margin-bottom: 20px;">
+            <button id="abrirPopup" class="btn-popup">Abrir Nota Arquivada</button>
+            <button onclick="alternarTema()" class="btn-tema">Alternar Tema</button>
+        </div>
+        
+        <hr>
+        
+        <section id="biografia">
+            <h2>I. Biografia da Autora</h2>
+            <p>Nascida em Jaú, São Paulo, em 1930, Hilda de Almeida Prado Hilst é considerada uma das maiores e mais singulares vozes da literatura brasileira, dona de uma escrita visceral e complexa. Estudou Direito na Universidade de São Paulo (USP), formando-se em 1952. Durante seus anos de juventude, destacou-se pela beleza e inteligência, levando uma vida social intensa, o que contrasta fortemente com sua fase posterior.</p>
+            
+            <div class="image-wrapper">
+                <img src="imagens/poeta.jpg" alt="Hilda Hilst jovem">
+                <button class="btn-image-popup" data-modal-id="modalImage4">Ver Curiosidade</button>
+            </div>
+
+            <p>Sua virada crucial ocorreu no início dos anos 60, quando se retirou para a chácara "Casa do Sol", em Campinas. Essa reclusão autoimposta, que durou mais de quarenta anos, foi dedicada integralmente à criação. Lá, Hilst buscou uma concentração absoluta para sua arte, explorando a fundo as questões metafísicas, o amor e o erotismo, e distanciando-se das convenções do meio literário e da sociedade.</p>
+            <p>Hilda Hilst faleceu em 2004, mas sua obra vive um intenso processo de redescoberta e consagração crítica internacional.</p>
+        </section>
+
+        <hr>
+
+        <section id="contexto">
+            <h2>II. Contexto Sócio-Histórico</h2>
+            <p>A produção de Hilst se desenvolveu principalmente durante a Ditadura Militar (1964-1985) e o período subsequente. Embora não fosse uma autora de panfletos ou engajamento político explícito, sua obra é um ato de resistência pela via da linguagem e da provocação filosófica.</p>
+            
+            <div class="anotacao-container">
+                <p>O foco de Hilst no drama íntimo e na busca pelo Absoluto a coloca em diálogo, mas também em contraste, com a Poesia Marginal e a literatura de cunho social de seu tempo. A reclusão na Casa do Sol é, em si, uma <span id="textoOculto" class="texto-oculto">crítica à superficialidade e ao caos do mundo exterior</span>.</p>
+            </div>
+
+            <div class="image-wrapper">
+                <img src="imagens/2.jpg" alt="Imagem surrealista representando o metafísico">
+                <button class="btn-image-popup" data-modal-id="modalImage2">Ver Análise</button>
+            </div>
+
+            <p>O mercado editorial e o ambiente moralista da época frequentemente a marginalizaram, especialmente devido à sua abordagem crua e desinibida da sexualidade, do grotesco e do divino. Sua insistência em temas profundos e pouco palatáveis para o grande público contribuiu para que sua obra só alcançasse ampla projeção póstuma, um fenômeno comum a grandes visionários.</p>
+        </section>
+
+        <hr>
+
+        <section id="obras">
+            <h2>III. Principais Obras e Temáticas</h2>
+            <p>A riqueza da obra hilstiana se manifesta na alternância de gêneros e na profundidade de seus eixos temáticos:</p>
+            
+            <div class="image-wrapper">
+                <img src="imagens/1.png" alt="Capa do livro Balada do Festival de Hilda Hilst">
+                <button class="btn-image-popup" data-modal-id="modalImage1">Detalhes da Obra</button>
+            </div>
+
+            <ul>
+                <li>Eixo Metafísico e Místico: Exploração do relacionamento com o divino, a procura por Deus e o vazio existencial. As obras desse eixo são marcadas por uma linguagem lírica e intensa. Exemplos: Poemas aos Homens do Nosso Tempo, Júbilo, Memória, Noviciado da Paixão.</li>
+                <li>Eixo Erótico e do Desejo: Uma desmistificação poética e filosófica da sexualidade e do desejo. Longe do pornô, ela usa o erotismo para falar sobre a condição humana e a transcendência pela carne. Exemplos: Cartas de um Sedutor, A Obscena Senhora D, O Caderno Rosa de Lory Lamby.</li>
+                <li>Eixo do Grotesco e Sátira: Textos com humor ácido e experimental, frequentemente escritos como uma "tentativa de comunicação" com o público em geral, usando a linguagem de forma irreverente e satírica. Exemplos: Kastelo, Contos Ditos.</li>
+            </ul>
+
+            <div class="image-wrapper">
+                <img src="imagens/3.jpg" alt="Coleção de livros da prosa de Hilda Hilst">
+                <button class="btn-image-popup" data-modal-id="modalImage3">Sobre a Coleção</button>
+            </div>
+
+            <p>Sua prosa, como em A Obscena Senhora D, é marcada pelo fluxo de consciência e pela fragmentação, tornando-a uma leitura desafiadora e profundamente recompensadora.</p>
+        </section>
+    </main>
+
+    <div id="modalPopup" class="modal">
+        <div class="modal-content">
+            <span class="fechar-popup">&times;</span>
+            <h3>Nota da Pesquisadora (02/09/1988)</h3>
+            <p>A Casa do Sol não era apenas uma residência, mas um laboratório para a criação, onde a autora buscava uma pureza quase mística para a sua arte, afastada do ruído das cidades. Ela recebia poucos amigos e intelectuais, mantendo o foco total na escrita.</p>
+        </div>
+    </div>
+
+    <div id="modalImage4" class="modal">
+        <div class="modal-content">
+            <span class="fechar-popup">&times;</span>
+            <h3>Hilda Jovem</h3>
+            <p>Esta imagem mostra Hilda Hilst em seus anos de juventude, antes da reclusão na Casa do Sol. Sua beleza e inteligência eram notáveis, e ela era figura presente em círculos intelectuais e sociais importantes de São Paulo.</p>
+        </div>
+    </div>
+
+    <div id="modalImage2" class="modal">
+        <div class="modal-content">
+            <span class="fechar-popup">&times;</span>
+            <h3>Metafísica e Existência</h3>
+            <p>Esta imagem surrealista evoca o universo metafísico e existencial que Hilda Hilst tanto explorou. A figura feminina olhando para o cosmos pode ser uma representação da busca incessante da autora pelo Absoluto, por respostas sobre a vida e a morte, o divino e o humano, temas centrais em sua poesia e prosa.</p>
+        </div>
+    </div>
+
+    <div id="modalImage1" class="modal">
+        <div class="modal-content">
+            <span class="fechar-popup">&times;</span>
+            <h3>Balada do Festival (1974)</h3>
+            <p>Balada do Festival é um dos importantes livros de poesia de Hilda Hilst. Publicado originalmente em 1974, é um exemplo de sua capacidade de expressar, através de uma linguagem lírica e complexa, a fragilidade humana e a beleza do instante. A capa aqui apresentada reflete a sensibilidade artística de sua obra.</p>
+        </div>
+    </div>
+
+    <div id="modalImage3" class="modal">
+        <div class="modal-content">
+            <span class="fechar-popup">&times;</span>
+            <h3>A Prosa Completa</h3>
+            <p>Esta coleção reúne a aclamada prosa de Hilda Hilst, um marco para os leitores que desejam mergulhar na profundidade e ousadia de sua ficção. A Companhia das Letras tem desempenhado um papel crucial na republicação e divulgação de sua obra, garantindo que novas gerações descubram a força de sua escrita.</p>
+        </div>
+    </div>
+    <a href="pesquisa/poema_joao.html"> <button class="btn-image-popup">poema de joão</button>
+    </a>
+    <a href="pesquisa/poema_lucas.html"><button class="btn-image-popup">poema de lucas</button>
+    </a>
+    <a href="index.html"><button class="btn-image-popup">menu</button>
+    </a>
+    <script>
+        const modalPopup = document.getElementById("modalPopup");
+        const btnPopup = document.getElementById("abrirPopup");
+        const fecharPopups = document.querySelectorAll(".fechar-popup");
+
+        btnPopup.onclick = function() {
+          modalPopup.style.display = "block";
+        }
+
+        fecharPopups.forEach(span => {
+            span.onclick = function() {
+                this.closest('.modal').style.display = "none";
+            }
+        });
+
+        window.onclick = function(event) {
+          if (event.target.classList.contains('modal')) {
+            event.target.style.display = "none";
+          }
+        }
+
+        function alternarTema() {
+            const body = document.body;
+            body.classList.toggle('modo-contraste'); 
+        }
+
+        // Lógica para os popups das imagens
+        document.querySelectorAll('.btn-image-popup').forEach(button => {
+            button.onclick = function() {
+                const modalId = this.dataset.modalId;
+                document.getElementById(modalId).style.display = "block";
+            };
+        });
+    </script>
+</body>
+</html>

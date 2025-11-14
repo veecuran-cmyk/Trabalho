@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" href="styles/style.css"/>
+  <title>Hilda Hilst</title>
+</head>
+<body>
+  <h1>
+    <mark>Trabalho de português</mark>
+  </h1>
+  <hr>
+  <h2 style="text-align:left;">•Tema:Hilda Hilst</h2>
+  <img src='imagens/poeta.jpg' height="200" onclick='abrirlink()'>
+  <button onclick='resumir()'>Resumo</button>
+  
+  <a href="apresentar.html"><button>apresentação</button>
+  </a>
+  <a href="quiz/quiz.html"><button>quiz</button>
+  </a>
+  <hr>
+  <script src='scripts/referencia.js'></script>
+  <script>
+  function resumir(){
+    while(true){
+      var duvida = prompt('1-suas obras\n2-biografia\n3-contexto historico\n4-sair')
+    
+      if (duvida==='1'){
+        alert('')
+    }else if (duvida==='2'){
+      alert('Hilda Hilst (1930-2004) foi uma escritora brasileira que se formou em Direito pela USP (1952), mas dedicou-se exclusivamente à literatura a partir de 1954. Estreou com o livro de poesias "Presságio" (1950). Em 1965, mudou-se para Campinas, onde viveu na "Casa do Sol". Sua obra aborda a doença do pai e transita entre poesia, teatro ("O Visitante", 1968) e ficção ("Fluxo Floema", 1970). Em 1990, causou impacto ao publicar "O Caderno Rosa de Lori Lamby", assumindo a literatura pornográfica, seguida pelas poesias satíricas "Bufólicas" (1992).')
+    }else if (duvida==='3'){
+      alert('Durante a época em que a escrita de Hilda Hilst se insere no contexto do pós-modernismo no Brasil, o país atravessava a Ditadura Militar (1964-1985), um período de profunda repressão política, social e cultural. Esse cenário conturbado, marcado por censura e violência, moldou significativamente a produção artística da época.')
+    }else if (duvida ==='4'){
+      var confirma = confirm('deseja continuar com essa ação?')
+      if (confirma){
+        alert('até logo :)')
+        break
+      }else{
+        console.log('operação interrompida')
+      }
+    }else{
+      alert('Operação cancelada')
+      break
+    }
+  }
+    }
+  </script>
+</body>
+</html>
