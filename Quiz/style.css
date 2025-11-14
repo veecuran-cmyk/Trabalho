@@ -1,0 +1,235 @@
+body {
+    font-family: 'Old Standard TT', serif; /* Fonte mais antiga */
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    /* Efeito de papel antigo no fundo */
+    background-image: url('https://www.transparenttextures.com/patterns/old-map.png'); /* Exemplo de textura */
+    background-color: #f8e7c1; /* Cor de base de papel antigo */
+    color: #3e2723; /* Cor de texto mais escura */
+}
+
+h2, h3 {
+    font-family: 'Cormorant Garamond', serif; /* Fonte para títulos */
+    color: #5d4037; /* Cor de título */
+    text-align: center;
+    border-bottom: 1px solid #c7b39b;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.screen {
+    display: none; /* Esconde todas as telas */
+    background-color: #fdfaf5; /* Cor de papel mais clara para a tela */
+    padding: 30px 40px;
+    border-radius: 5px; /* Bordas menos arredondadas */
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2); /* Sombra mais pronunciada */
+    width: 90%;
+    max-width: 600px;
+    border: 1px solid #d4c1a7; /* Borda sutil */
+    /* Efeito de papel antigo na tela */
+    background-image: url('https://www.transparenttextures.com/patterns/paper.png'); /* Outra textura */
+}
+
+.screen.active {
+    display: block; /* Mostra apenas a tela ativa */
+}
+
+input[type="text"],
+input[type="password"],
+input[type="date"],
+input[type="url"], /* Adicionado estilo para input de URL */
+select {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    box-sizing: border-box; 
+    border: 1px solid #a1887f; /* Borda mais escura */
+    border-radius: 3px; /* Bordas sutis */
+    background-color: #fffdf5; /* Cor de fundo para inputs */
+    color: #3e2723;
+    font-family: 'Old Standard TT', serif;
+}
+
+button {
+    background-color: #795548; /* Tom marrom para botões */
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 1rem; /* Tamanho da fonte relativo */
+    margin: 5px;
+    transition: background-color 0.3s ease; /* Transição suave */
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: bold;
+}
+
+button:hover {
+    background-color: #5d4037; /* Tom mais escuro no hover */
+}
+
+.error {
+    color: #c62828; /* Vermelho mais forte */
+    font-size: 0.9em;
+}
+
+.question {
+    margin-bottom: 20px;
+    border-bottom: 1px dashed #d4c1a7; /* Linha tracejada */
+    padding-bottom: 15px;
+}
+
+.question p {
+    font-weight: bold;
+    color: #4e342e;
+}
+
+.question label {
+    display: block;
+    margin: 8px 0;
+}
+
+.loader {
+    border: 4px solid #d4c1a7;
+    border-top: 4px solid #795548;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.captcha-text {
+    background-color: #fefaf0;
+    border: 1px solid #d4c1a7;
+    padding: 15px;
+    border-radius: 3px;
+    font-style: italic;
+    margin-bottom: 20px;
+    color: #3e2723;
+}
+
+#captcha-questions {
+    margin-top: 20px;
+}
+
+#captcha-questions p {
+    margin-top: 15px;
+    font-weight: bold;
+    color: #4e342e;
+}
+
+.captcha-btn {
+    background-color: #a1887f; /* Tom cinza-marrom */
+    margin: 5px;
+    padding: 10px 15px;
+}
+
+.captcha-btn:hover {
+    background-color: #8d6e63;
+}
+
+.captcha-btn.selected {
+    background-color: #4caf50; /* Verde, mas com tom um pouco mais fechado */
+    border: 2px solid #388e3c;
+    color: white;
+}
+
+.admin-section {
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px dashed #d4c1a7;
+}
+
+#admin-hint-requests li {
+    padding: 10px;
+    background-color: #fefaf0;
+    border: 1px solid #d4c1a7;
+    margin-bottom: 8px;
+    cursor: pointer;
+    border-radius: 3px;
+    color: #3e2723;
+}
+
+#admin-hint-requests li:hover {
+    background-color: #f5f0e1;
+}
+
+#admin-hint-requests li.selected {
+    background-color: #795548;
+    color: white;
+    font-weight: bold;
+}
+
+/* NOVO: Estilos para pré-visualização do avatar */
+.avatar-preview-container {
+    margin: 20px 0;
+    text-align: center;
+}
+
+.avatar-preview-container p {
+    font-size: 0.9em;
+    color: #5d4037;
+    margin-bottom: 5px;
+}
+
+#avatar-preview {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #d4c1a7;
+    background-color: #f0f0f0; /* Fundo caso a imagem quebre */
+}
+
+/* Estilo para a tabela do placar */
+#full-scoreboard {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+#full-scoreboard th, #full-scoreboard td {
+    border: 1px solid #d4c1a7;
+    padding: 10px;
+    text-align: left;
+    font-size: 0.95em;
+    color: #3e2723;
+}
+
+#full-scoreboard th {
+    background-color: #e0d1b9;
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: bold;
+    color: #5d4037;
+}
+
+#full-scoreboard tbody tr:nth-child(odd) {
+    background-color: #fefaf5;
+}
+
+#full-scoreboard tbody tr:nth-child(even) {
+    background-color: #fffdf5;
+}
+
+#top-3-list {
+    list-style-type: decimal; /* Números para a lista */
+    padding-left: 20px;
+    margin-bottom: 25px;
+}
+
+#top-3-list li {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #5d4037;
+    margin-bottom: 5px;
+}

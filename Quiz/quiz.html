@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PIEC Quiz Game</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&family=Old+Standard+TT&display=swap" rel="stylesheet">
+    
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+    <div id="login-screen" class="screen active">
+        <h2>Login</h2>
+        <input type="password" id="password-input" placeholder="Senha">
+        <button id="login-button">Entrar</button>
+        <a href="../index.html"><button id='login-button'>voltar</button>
+        </a>
+        <p id="login-error" class="error"></p>
+    </div>
+
+    <div id="player-setup-screen" class="screen">
+        <h2>Configurar Perfil</h2>
+        
+        <label for="player-name">Seu Nome (ID):</label>
+        <input type="text" id="player-name" placeholder="Ex: Maria">
+        
+        <label for="player-avatar-url">Link para Imagem de Perfil (URL):</label>
+        <input type="url" id="player-avatar-url" placeholder="https://exemplo.com/imagem.png">
+        
+        <div class="avatar-preview-container">
+            <p>Pré-visualização:</p>
+            <img id="avatar-preview" src="https://via.placeholder.com/80/e0e0e0/000000?text=Avatar" alt="Avatar Preview">
+        </div>
+        
+        <button id="join-game-button">Entrar no Jogo</button>
+    </div>
+
+    <div id="waiting-room-screen" class="screen">
+        <h2>Sala de Espera</h2>
+        <p>Aguardando o Administrador iniciar o jogo...</p>
+        <div class="loader"></div>
+    </div>
+
+    <div id="game-screen" class="screen">
+        <h2>Quiz - Hilda Hilst</h2>
+        <form id="quiz-form">
+            
+            <div class="question">
+                <p>1. Qual o ano que Hilda nasceu e faleceu?</p>
+                <label><input type="radio" name="q1" value="a"> a) 1930 a 2004</label>
+                <label><input type="radio" name="q1" value="b"> b) 1890 a 1999</label>
+                <label><input type="radio" name="q1" value="c"> c) 1950 a 2010</label>
+                <label><input type="radio" name="q1" value="d"> d) 1899 a 2000</label>
+            </div>
+
+            <div class="question">
+                <label for="q2">2. O que estava acontecendo no Brasil na época que Hilda estava escrevendo?</label>
+                <input type="text" id="q2" name="q2" required>
+            </div>
+
+            <div class="question">
+                <label for="q3">3. Qual eram as principais temáticas dos seus poemas? (Cite pelo menos 3)</label>
+                <input type="text" id="q3" name="q3" placeholder="Tema 1, Tema 2, Tema 3" required>
+            </div>
+
+            <div class="question">
+                <label for="q4">4. Insira a data do início de sua carreira:</label>
+                <input type="date" id="q4" name="q4" required>
+            </div>
+
+            <button type="submit">Enviar Respostas</button>
+        </form>
+    </div>
+
+    <div id="captcha-screen" class="screen">
+        <h2>Você ganhou! Responda o CAPTCHA para concluir.</h2>
+        <p>Jogador: <strong id="captcha-player-id"></strong></p>
+        
+        <div class="captcha-text">
+            <p>"Hilda Hilst (1930-2004) foi uma das maiores escritoras do século XX. Sua obra, vasta e complexa, navegou entre a poesia, o teatro e a prosa. Frequentemente abordou o místico, o erótico e o escatológico, desafiando convenções sociais e literárias. Muitos a consideram 'maldita' por sua recusa em se enquadrar em padrões comerciais, vivendo reclusa na Casa do Sol."</p>
+        </div>
+
+        <div id="captcha-questions">
+            <p><strong>Questão 1:</strong> Qual o ano de nascimento de Hilda?</p>
+            <input type="text" id="captcha-q1" placeholder="Ano">
+
+            <p><strong>Questão 2:</strong> Cite dois gêneros que ela explorou.</p>
+            <select id="captcha-q2-1">
+                <option value="">Gênero 1</option>
+                <option value="poesia">Poesia</option>
+                <option value="romance">Romance</option>
+                <option value="teatro">Teatro</option>
+                <option value="prosa">Prosa</option>
+            </select>
+            <select id="captcha-q2-2">
+                <option value="">Gênero 2</option>
+                <option value="poesia">Poesia</option>
+                <option value="romance">Romance</option>
+                <option value="teatro">Teatro</option>
+                <option value="prosa">Prosa</option>
+            </select>
+
+            <p><strong>Questão 3:</strong> Onde ela vivia reclusa?</p>
+            <button class="captcha-btn" data-answer="Casa do Sol">Casa do Sol</button>
+            <button class="captcha-btn" data-answer="Rio de Janeiro">Rio de Janeiro</button>
+            <button class="captcha-btn" data-answer="São Paulo">São Paulo</button>
+        </div>
+
+        <button id="submit-captcha">Concluir CAPTCHA</button>
+        <button id="request-hint">Solicitar ajuda ao Admin (custa pontos)</button>
+    </div>
+
+    <div id="scoreboard-screen" class="screen">
+        <h2>Placar Final</h2>
+        <h3>Top 3</h3>
+        <ol id="top-3-list">
+            </ol>
+        <h3>Todos os Jogadores</h3>
+        <table id="full-scoreboard">
+            <thead>
+                <tr>
+                    <th>Posição</th>
+                    <th>Jogador</th>
+                    <th>Avatar</th>
+                    <th>Pontos</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="full-scoreboard-body">
+                </tbody>
+        </table>
+        <button id="back-to-admin">Voltar (Admin)</button>
+    </div>
+
+    <div id="admin-panel-screen" class="screen">
+        <h2>Modo Administrador</h2>
+        <button id="start-game-button">1. Iniciar o Jogo</button>
+        <button id="view-scoreboard-button">2. Acompanhar Placar</button>
+        
+        <div class="admin-section">
+            <h3>3. Gerenciar Jogadores</h3>
+            <select id="admin-player-list">
+                <option value="">Selecione um jogador</option>
+            </select>
+            <button id="admin-ban-button">Banir</button>
+            <button id="admin-punish-button">Punir (-5 pontos)</button>
+        </div>
+
+        <div class="admin-section">
+            <h3>4. Auxiliar Jogadores (Dicas)</h3>
+            <p>Pedidos de Dica (clique para responder):</p>
+            <ul id="admin-hint-requests">
+                </ul>
+            <input type="text" id="admin-hint-prompt" placeholder="Digite a dica para o jogador selecionado...">
+            <button id="admin-send-hint-button">Enviar Dica</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
