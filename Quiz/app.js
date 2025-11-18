@@ -33,11 +33,10 @@ const joinGameButton = document.getElementById('join-game-button');
 const playerNameInput = document.getElementById('player-name');
 const playerAvatarUrlInput = document.getElementById('player-avatar-url');
 const avatarPreview = document.getElementById('avatar-preview');
-const colorSwatchContainer = document.getElementById('color-swatch-container'); // NOVO
+const colorSwatchContainer = document.getElementById('color-swatch-container');
 const quizForm = document.getElementById('quiz-form');
 const captchaPlayerId = document.getElementById('captcha-player-id');
 const submitCaptchaButton = document.getElementById('submit-captcha');
-const requestHintButton = document.getElementById('request-hint');
 const captchaButtons = document.querySelectorAll('.captcha-btn');
 
 // Admin
@@ -45,32 +44,43 @@ const startGameButton = document.getElementById('start-game-button');
 const viewScoreboardButton = document.getElementById('view-scoreboard-button');
 const backToAdminButton = document.getElementById('back-to-admin');
 const adminPlayerList = document.getElementById('admin-player-list');
-const adminBanButton = document.getElementById('admin-ban-button');
+const adminBanButton = document.getElementById('admin-ban-button'); // Botão Deletar
 const adminPunishButton = document.getElementById('admin-punish-button');
-const adminHintRequestsList = document.getElementById('admin-hint-requests');
-const adminHintPrompt = document.getElementById('admin-hint-prompt');
-const adminSendHintButton = document.getElementById('admin-send-hint-button');
+
+// CHAT DOM (Jogador)
+const chatModal = document.getElementById('chat-modal');
+const chatMessagesContainer = document.getElementById('chat-messages-container');
+const chatInput = document.getElementById('chat-input');
+const sendChatMessageButton = document.getElementById('send-chat-message-button');
+const openChatButton = document.getElementById('open-chat-button');
+const openChatButtonGame = document.getElementById('open-chat-button-game');
+const closeChatModalButton = document.getElementById('close-chat-modal-button');
+
+// CHAT DOM (Admin)
+const adminChatSection = document.getElementById('admin-chat-section');
+const adminActiveChatsList = document.getElementById('admin-active-chats-list');
+const adminChatMessagesContainer = document.getElementById('admin-chat-messages-container');
+const adminChatInput = document.getElementById('admin-chat-input');
+const adminSendChatMessageButton = document.getElementById('admin-send-chat-message-button');
 
 // --- ESTADO GLOBAL ---
 const defaultAvatar = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTuz1HKNz1zEXryZ8_K0H7SNkZhpdGIAgNuHQ&s";
-
-// NOVO: Paleta de Cores
 const colorPalette = [
     '#3e2723', '#d32f2f', '#c2185b', '#7b1fa2', '#512da8', '#303f9f',
     '#1976d2', '#0288d1', '#0097a7', '#00796b', '#388e3c', '#689f38',
     '#afb42b', '#fbc02d', '#ffa000', '#f57c00', '#e64a19', '#5d4037',
     '#616161', '#455a64', '#000000'
 ];
-let selectedColor = colorPalette[0]; // Cor padrão
+let selectedColor = colorPalette[0]; 
 
 let currentPlayer = {
     id: null,
     name: null,
     score: 0,
-    avatar: defaultAvatar, // MODIFICADO
-    color: selectedColor   // NOVO
+    avatar: defaultAvatar,
+    color: selectedColor   
 };
-let adminCurrentHintTarget = { playerId: null, requestId: null };
+let adminCurrentChatId = null; 
 let captchaQ3Answer = null;
 
 // --- FUNÇÕES DE NAVEGAÇÃO ---
@@ -96,7 +106,7 @@ loginButton.addEventListener('click', () => {
 
 // --- LÓGICA DO JOGADOR ---
 
-// NOVO: Gerar as amostras de cores
+// Gerar as amostras de cores
 function populateColorSwatches() {
     colorPalette.forEach((color, index) => {
         const swatch = document.createElement('div');
@@ -105,15 +115,12 @@ function populateColorSwatches() {
         swatch.dataset.color = color;
         
         if (index === 0) {
-            swatch.classList.add('selected'); // Seleciona a primeira cor por padrão
+            swatch.classList.add('selected');
         }
 
         swatch.addEventListener('click', () => {
-            // Remove a seleção de todas
             document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
-            // Adiciona seleção à clicada
             swatch.classList.add('selected');
-            // Atualiza a cor global
             selectedColor = color;
         });
         
@@ -121,56 +128,53 @@ function populateColorSwatches() {
     });
 }
 
-// MODIFICADO: Listener para a pré-visualização do avatar
+// Listener para a pré-visualização do avatar
 playerAvatarUrlInput.addEventListener('input', () => {
     const url = playerAvatarUrlInput.value.trim();
     if (url && (url.startsWith('http://') || url.startsWith('https://'))) {
         avatarPreview.src = url;
     } else {
-        avatarPreview.src = defaultAvatar; // Reseta para o padrão se for inválido
+        avatarPreview.src = defaultAvatar;
     }
 });
 
-// 2. Entrar no Jogo (MODIFICADO)
+// Entrar no Jogo
 joinGameButton.addEventListener('click', () => {
     const playerName = playerNameInput.value;
-    let characterUrl = playerAvatarUrlInput.value.trim(); // MODIFICADO
+    let characterUrl = playerAvatarUrlInput.value.trim();
 
     if (playerName.trim() === '') {
         alert('Por favor, insira seu nome.');
         return;
     }
     
-    // MODIFICADO: Não é mais obrigatório. Se for inválido, usa o padrão.
     if (characterUrl === '' || (!characterUrl.startsWith('http://') && !characterUrl.startsWith('https://'))) {
         characterUrl = defaultAvatar;
     }
 
-    currentPlayer.id = playerName.toLowerCase().replace(/\s/g, '_') + "_" + Date.now(); // ID único
+    currentPlayer.id = playerName.toLowerCase().replace(/\s/g, '_') + "_" + Date.now();
     currentPlayer.name = playerName;
-    currentPlayer.avatar = characterUrl; // Salva a URL do avatar
-    currentPlayer.color = selectedColor; // NOVO: Salva a cor
+    currentPlayer.avatar = characterUrl;
+    currentPlayer.color = selectedColor;
 
-    // Salva o jogador no Firestore
     db.collection('players').doc(currentPlayer.id).set({
         name: playerName,
         character: characterUrl,
-        color: currentPlayer.color, // NOVO
+        color: currentPlayer.color,
         score: 0,
         status: 'waiting'
     })
     .then(() => {
         showScreen('waiting-room-screen');
         listenForGameStart();
-        listenForHints(); 
-        listenForBan(); 
+        listenForPlayerDeletion(); // Novo listener para remoção de conta
     })
     .catch(error => {
         console.error("Erro ao registrar jogador: ", error);
     });
 });
 
-// 3. Sala de Espera
+// Sala de Espera
 function listenForGameStart() {
     db.collection('gameStatus').doc('main')
         .onSnapshot((doc) => {
@@ -178,17 +182,13 @@ function listenForGameStart() {
                 db.collection('players').doc(currentPlayer.id).get().then(playerDoc => {
                     if (playerDoc.exists && playerDoc.data().status !== 'banned') {
                         showScreen('game-screen');
-                    } else if (!playerDoc.exists) {
-                         alert('Seu perfil de jogador não foi encontrado ou foi removido.');
-                         passwordInput.value = '';
-                         showScreen('login-screen');
                     }
                 });
             }
         });
 }
 
-// 4. Enviar Quiz (MODIFICADO)
+// Enviar Quiz
 quizForm.addEventListener('submit', (e) => {
     e.preventDefault();
     let score = 0;
@@ -200,11 +200,9 @@ quizForm.addEventListener('submit', (e) => {
     
     const q2Answer = document.getElementById('q2').value;
     const q3Answer = document.getElementById('q3').value;
-    
-    // MODIFICADO: Lógica da Questão 4
     const q4Year = document.getElementById('q4-year').value;
     const q4Month = document.getElementById('q4-month').value;
-    const q4Answer = q4Month ? `${q4Year}-${q4Month}` : q4Year; // Salva como "AAAA-MM" ou apenas "AAAA"
+    const q4Answer = q4Month ? `${q4Year}-${q4Month}` : q4Year;
 
     currentPlayer.score = score;
 
@@ -219,7 +217,7 @@ quizForm.addEventListener('submit', (e) => {
     });
 });
 
-// 5. Lógica do CAPTCHA (MODIFICADO)
+// Lógica do CAPTCHA
 captchaButtons.forEach(button => {
     button.addEventListener('click', () => {
         captchaButtons.forEach(btn => btn.classList.remove('selected'));
@@ -229,24 +227,18 @@ captchaButtons.forEach(button => {
 });
 
 submitCaptchaButton.addEventListener('click', () => {
-    // MODIFICADO: Lógica da Questão 1 do CAPTCHA
     const q1_selected = document.querySelector('input[name="captcha_q1"]:checked');
     const q1 = q1_selected ? q1_selected.value : null;
-    
     const q2_1 = document.getElementById('captcha-q2-1').value;
     const q2_2 = document.getElementById('captcha-q2-2').value;
     
     const q1_pass = (q1 === '1930');
-    
     const validQ2Options = ['poesia', 'prosa', 'teatro'];
-    const q2_pass = validQ2Options.includes(q2_1) && 
-                    validQ2Options.includes(q2_2) && 
-                    q2_1 !== q2_2;
-    
+    const q2_pass = validQ2Options.includes(q2_1) && validQ2Options.includes(q2_2) && q2_1 !== q2_2;
     const q3_pass = (captchaQ3Answer === 'Casa do Sol');
 
     if (q1_pass && q2_pass && q3_pass) {
-        currentPlayer.score += 5; // Bônus
+        currentPlayer.score += 5;
 
         db.collection('players').doc(currentPlayer.id).update({
             score: currentPlayer.score,
@@ -262,45 +254,101 @@ submitCaptchaButton.addEventListener('click', () => {
     }
 });
 
-// 5b. Pedir Dica (MODIFICADO)
-requestHintButton.addEventListener('click', () => {
-    currentPlayer.score -= 2; 
-    db.collection('players').doc(currentPlayer.id).update({ 
-        score: fieldValue.increment(-2)
-    });
+// ----------------------------------------------------
+// --- LÓGICA DE CHAT DO JOGADOR ---
+// ----------------------------------------------------
 
-    db.collection('hintRequests').add({
-        playerId: currentPlayer.id,
-        playerName: currentPlayer.name,
-        playerColor: currentPlayer.color, // NOVO
-        timestamp: new Date(),
-        status: 'pending'
+// Abrir Modal de Chat
+openChatButton.addEventListener('click', () => { chatModal.style.display = 'flex'; listenForChatMessages(); });
+openChatButtonGame.addEventListener('click', () => { chatModal.style.display = 'flex'; listenForChatMessages(); });
+closeChatModalButton.addEventListener('click', () => { chatModal.style.display = 'none'; });
+
+
+// Enviar Mensagem (Jogador)
+sendChatMessageButton.addEventListener('click', () => {
+    const messageText = chatInput.value.trim();
+    if (messageText === '') return;
+    
+    // 1. Verificar pontuação
+    db.collection('players').doc(currentPlayer.id).get().then(doc => {
+        const currentScore = doc.data().score;
+        if (currentScore < 2) {
+            alert('Você precisa de no mínimo 2 pontos para solicitar ajuda.');
+            chatInput.value = '';
+            return;
+        }
+
+        // 2. Deduzir pontos
+        db.collection('players').doc(currentPlayer.id).update({
+            score: fieldValue.increment(-2)
+        }).then(() => {
+            // 3. Enviar mensagem para a coleção 'chats'
+            const messageData = {
+                sender: currentPlayer.name,
+                text: messageText,
+                timestamp: new Date(),
+                isPlayer: true
+            };
+            
+            db.collection('chats').doc(currentPlayer.id).set({
+                playerId: currentPlayer.id,
+                playerName: currentPlayer.name,
+                playerColor: currentPlayer.color,
+                lastUpdate: new Date(),
+                status: 'active',
+                messages: fieldValue.arrayUnion(messageData)
+            }, { merge: true }) // Usa merge para não apagar o campo 'messages' se já existir
+            .then(() => {
+                chatInput.value = '';
+            });
+        });
     });
-    alert('Pedido de dica enviado ao Admin. Você perdeu 2 pontos.');
 });
 
-// 5c. Ouvir Dicas do Admin
-function listenForHints() {
-    db.collection('hints').where('toPlayerId', '==', currentPlayer.id)
-        .onSnapshot((snapshot) => {
-            snapshot.docChanges().forEach((change) => {
-                if (change.type === 'added') {
-                    const hint = change.doc.data();
-                    alert(`DICA DO ADMIN: \n"${hint.text}"`);
-                    db.collection('hints').doc(change.doc.id).delete();
-                }
-            });
+// Ouvir Mensagens do Chat (Jogador)
+function listenForChatMessages() {
+    db.collection('chats').doc(currentPlayer.id)
+        .onSnapshot((doc) => {
+            if (doc.exists && doc.data().messages) {
+                renderChatMessages(doc.data().messages, chatMessagesContainer);
+            } else {
+                chatMessagesContainer.innerHTML = '<p class="chat-placeholder">Inicie a conversa! Sua primeira mensagem custará 2 pontos.</p>';
+            }
         });
 }
 
-// 5d. Ouvir se foi Banido
-function listenForBan() {
+// Renderizar Mensagens
+function renderChatMessages(messages, container) {
+    container.innerHTML = '';
+    
+    // As mensagens no arrayUnion não vêm ordenadas, então ordenamos no cliente
+    messages.sort((a, b) => a.timestamp.toDate() - b.timestamp.toDate()); 
+
+    messages.forEach(msg => {
+        const msgDiv = document.createElement('div');
+        msgDiv.classList.add('chat-message');
+        msgDiv.classList.add(msg.isPlayer ? 'player-message' : 'admin-message');
+        
+        const senderName = msg.isPlayer ? 'Você' : 'Admin';
+        const senderColor = msg.isPlayer ? currentPlayer.color : '#303f9f';
+
+        msgDiv.innerHTML = `
+            <span style="color: ${senderColor}; font-weight: bold;">${senderName}:</span> ${msg.text}
+        `;
+        container.appendChild(msgDiv);
+    });
+    
+    container.scrollTop = container.scrollHeight;
+}
+
+// 5d. Ouvir se o jogador foi Deletado
+function listenForPlayerDeletion() {
      db.collection('players').doc(currentPlayer.id)
         .onSnapshot((doc) => {
-            if (doc.exists && doc.data().status === 'banned') {
-                alert('Você foi banido pelo administrador.');
+            if (!doc.exists) {
+                alert('Sua conta foi removida permanentemente pelo administrador.');
                 passwordInput.value = '';
-                showScreen('login-screen'); 
+                showScreen('login-screen');
             }
         });
 }
@@ -309,8 +357,8 @@ function listenForBan() {
 
 function adminInit() {
     loadPlayersIntoAdminList();
-    listenForHintRequests();
     listenForGameStatusChanges();
+    listenForActiveChats(); // Novo listener para o chat
 }
 
 function listenForGameStatusChanges() {
@@ -349,7 +397,7 @@ backToAdminButton.addEventListener('click', () => {
     showScreen('admin-panel-screen');
 });
 
-// MODIFICADO: Carregar placar com cores
+// Carregar placar com cores
 async function loadScoreboard() {
     const top3List = document.getElementById('top-3-list');
     const fullBody = document.getElementById('full-scoreboard-body');
@@ -367,7 +415,13 @@ async function loadScoreboard() {
     let position = 1;
     snapshot.forEach(doc => {
         const player = doc.data();
-        const color = player.color || '#3e2723'; // Cor padrão
+        const color = player.color || '#3e2723';
+
+        // Jogadores deletados não aparecem, pois a conta foi removida.
+        // Se houver um campo 'banned', não o mostramos.
+        if (player.status === 'banned') {
+            return;
+        }
 
         if (position <= 3) {
             const li = document.createElement('li');
@@ -397,35 +451,47 @@ function loadPlayersIntoAdminList() {
         
         snapshot.forEach(doc => {
             const player = doc.data();
+            // Mostra apenas jogadores ativos
             if (player.status !== 'banned') { 
                 const option = document.createElement('option');
                 option.value = doc.id; 
                 option.textContent = player.name;
-                // Nota: Não é fácil estilizar <option> com cores, então mantemos simples.
                 adminPlayerList.appendChild(option);
             }
         });
         
-        adminPlayerList.value = savedSelection;
+        if (Array.from(adminPlayerList.options).some(o => o.value === savedSelection)) {
+             adminPlayerList.value = savedSelection;
+        }
     });
 }
 
-// 3b. Botão Banir
+// 3b. Botão DELETAR (Modificado para remover a conta)
 adminBanButton.addEventListener('click', () => {
     const selectedPlayerId = adminPlayerList.value;
     if (!selectedPlayerId) {
-        alert('Selecione um jogador para banir.');
+        alert('Selecione um jogador para deletar.');
         return;
     }
     
-    if (confirm(`Tem certeza que deseja banir o jogador ${adminPlayerList.options[adminPlayerList.selectedIndex].text}?`)) {
-        db.collection('players').doc(selectedPlayerId).update({
-            status: 'banned',
-            score: 0 
+    const selectedPlayerName = adminPlayerList.options[adminPlayerList.selectedIndex].text;
+    
+    if (confirm(`ATENÇÃO! Tem certeza que deseja DELETAR PERMANENTEMENTE a conta do jogador ${selectedPlayerName}? Esta ação é irreversível e o jogador será desconectado.`)) {
+        
+        // Comando principal: Deletar o documento do jogador
+        db.collection('players').doc(selectedPlayerId).delete()
+        .then(() => {
+             // Opcional: deletar o chat também
+            db.collection('chats').doc(selectedPlayerId).delete().catch(() => {});
+            alert('Conta do jogador deletada com sucesso.');
         })
-        .then(() => alert('Jogador banido.'));
+        .catch(error => {
+            console.error("Erro ao deletar conta: ", error);
+            alert("Erro ao deletar conta. Verifique o console.");
+        });
     }
 });
+
 
 // 3c. Botão Punir
 adminPunishButton.addEventListener('click', () => {
@@ -442,72 +508,93 @@ adminPunishButton.addEventListener('click', () => {
 });
 
 
-// 4. Auxiliar Jogadores (Ouvir Pedidos) (MODIFICADO)
-function listenForHintRequests() {
-    db.collection('hintRequests').where('status', '==', 'pending').orderBy('timestamp')
-        .onSnapshot(snapshot => {
-        
-        adminHintRequestsList.innerHTML = ''; 
-        
-        snapshot.forEach(doc => {
-            const request = doc.data();
-            const color = request.playerColor || '#3e2723'; // Cor padrão
-            
-            const li = document.createElement('li');
-            li.innerHTML = `Pedido de: <strong style="color: ${color};">${request.playerName}</strong>`; // Mostra nome com cor
-            li.dataset.playerId = request.playerId; 
-            li.dataset.requestId = doc.id; 
+// ----------------------------------------------------
+// --- LÓGICA DE CHAT DO ADMIN ---
+// ----------------------------------------------------
 
-            li.addEventListener('click', () => {
-                adminHintRequestsList.querySelectorAll('li').forEach(item => item.classList.remove('selected'));
-                li.classList.add('selected');
-                
-                adminCurrentHintTarget = {
-                    playerId: li.dataset.playerId,
-                    requestId: li.dataset.requestId,
-                    playerName: request.playerName
-                };
-                adminHintPrompt.placeholder = `Digite a dica para ${request.playerName}...`
-                adminHintPrompt.focus();
-            });
+// Ouvir Chats Ativos (Admin)
+function listenForActiveChats() {
+    db.collection('chats').where('status', '==', 'active').orderBy('lastUpdate', 'desc')
+        .onSnapshot(snapshot => {
+            adminActiveChatsList.innerHTML = '';
             
-            adminHintRequestsList.appendChild(li);
+            snapshot.forEach(doc => {
+                const chat = doc.data();
+                const color = chat.playerColor || '#3e2723';
+                const li = document.createElement('li');
+                li.innerHTML = `<strong style="color: ${color};">${chat.playerName}</strong>`;
+                li.dataset.playerId = doc.id;
+                li.classList.add('chat-entry');
+
+                if (doc.id === adminCurrentChatId) {
+                    li.classList.add('selected');
+                }
+
+                li.addEventListener('click', () => {
+                    adminActiveChatsList.querySelectorAll('li').forEach(item => item.classList.remove('selected'));
+                    li.classList.add('selected');
+                    adminCurrentChatId = doc.id;
+                    adminChatMessagesContainer.innerHTML = '';
+                    adminChatInput.disabled = false;
+                    adminSendChatMessageButton.disabled = false;
+                    listenForAdminChatMessages(adminCurrentChatId, chat.playerName);
+                });
+
+                adminActiveChatsList.appendChild(li);
+            });
+
+            // Se a lista ficar vazia, desativa o campo de input
+            if(snapshot.empty) {
+                adminChatInput.disabled = true;
+                adminSendChatMessageButton.disabled = true;
+                adminChatMessagesContainer.innerHTML = '<p class="chat-placeholder">Não há chats ativos no momento.</p>';
+            }
         });
-    });
 }
 
-// 4b. Enviar Dica
-adminSendHintButton.addEventListener('click', () => {
-    const hintText = adminHintPrompt.value;
-    if (!adminCurrentHintTarget.playerId) {
-        alert('Selecione um pedido de dica na lista acima.');
-        return;
-    }
-    if (hintText.trim() === '') {
-        alert('Escreva uma dica.');
-        return;
-    }
-
-    db.collection('hints').add({
-        toPlayerId: adminCurrentHintTarget.playerId,
-        text: hintText,
-        timestamp: new Date()
-    })
-    .then(() => {
-        db.collection('hintRequests').doc(adminCurrentHintTarget.requestId).update({
-            status: 'completed',
-            adminResponse: hintText
+// Ouvir Mensagens do Chat Selecionado (Admin)
+function listenForAdminChatMessages(chatId, playerName) {
+    db.collection('chats').doc(chatId)
+        .onSnapshot((doc) => {
+            // Verifica se o chat ainda está ativo e se é o chat que o admin está visualizando
+            if (doc.exists && doc.data().messages && adminCurrentChatId === chatId) {
+                renderChatMessages(doc.data().messages, adminChatMessagesContainer);
+                adminChatInput.placeholder = `Responder a ${playerName}...`;
+            } else if (!doc.exists && adminCurrentChatId === chatId) {
+                // Se o jogador sair e o chat for deletado (opcional)
+                adminCurrentChatId = null;
+                adminChatMessagesContainer.innerHTML = '<p class="chat-placeholder">O jogador saiu ou o chat foi encerrado.</p>';
+                adminChatInput.disabled = true;
+                adminSendChatMessageButton.disabled = true;
+            }
         });
-        
-        adminHintPrompt.value = '';
-        adminHintPrompt.placeholder = 'Digite a dica para o jogador selecionado...';
-        adminCurrentHintTarget = { playerId: null, requestId: null, playerName: null };
-        
-        alert('Dica enviada!');
+}
+
+// Enviar Mensagem (Admin)
+adminSendChatMessageButton.addEventListener('click', () => {
+    const messageText = adminChatInput.value.trim();
+    if (!adminCurrentChatId) {
+        alert('Selecione um chat ativo.');
+        return;
+    }
+    if (messageText === '') return;
+
+    const messageData = {
+        sender: 'Admin',
+        text: messageText,
+        timestamp: new Date(),
+        isPlayer: false
+    };
+
+    db.collection('chats').doc(adminCurrentChatId).update({
+        lastUpdate: new Date(),
+        messages: fieldValue.arrayUnion(messageData)
+    }).then(() => {
+        adminChatInput.value = '';
     });
 });
 
 
 // --- INICIALIZAÇÃO ---
-populateColorSwatches(); // NOVO: Chama a função que cria as cores
-showScreen('login-screen'); // Mostra a tela de login ao carregar
+populateColorSwatches();
+showScreen('login-screen');
