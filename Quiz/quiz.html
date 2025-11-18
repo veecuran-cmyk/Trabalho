@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hilda hist</title>
+    <title>PIEC Quiz Game</title>
     <link rel="stylesheet" href="style.css">
     
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&family=Old+Standard+TT&display=swap" rel="stylesheet">
@@ -28,13 +28,17 @@
         <label for="player-name">Seu Nome (ID):</label>
         <input type="text" id="player-name" placeholder="Ex: Maria">
         
-        <label for="player-avatar-url">Link para Imagem de Perfil (URL):</label>
-        <input type="url" id="player-avatar-url" placeholder="https://exemplo.com/imagem.png">
+        <label for="player-avatar-url">Link para Imagem de Perfil (URL - Opcional):</label>
+        <input type="url" id="player-avatar-url" value="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTuz1HKNz1zEXryZ8_K0H7SNkZhpdGIAgNuHQ&s">
         
         <div class="avatar-preview-container">
             <p>Pré-visualização:</p>
-            <img id="avatar-preview" src="https://via.placeholder.com/80/e0e0e0/000000?text=Avatar" alt="Avatar Preview">
+            <img id="avatar-preview" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTuz1HKNz1zEXryZ8_K0H7SNkZhpdGIAgNuHQ&s" alt="Avatar Preview">
         </div>
+
+        <label>Cor do Nome:</label>
+        <div id="color-swatch-container">
+            </div>
         
         <button id="join-game-button">Entrar no Jogo</button>
     </div>
@@ -68,8 +72,27 @@
             </div>
 
             <div class="question">
-                <label for="q4">4. Insira a data do início de sua carreira:</label>
-                <input type="date" id="q4" name="q4" required>
+                <label for="q4-year">4. Qual o ano (e mês, opcional) do início de sua carreira?</label>
+                
+                <label for="q4-year" style="display: block; margin-top: 10px;">Ano (obrigatório):</label>
+                <input type="number" id="q4-year" name="q4_year" placeholder="Ex: 1950" required min="1900" max="2024">
+                
+                <label for="q4-month" style="display: block; margin-top: 10px;">Mês (opcional):</label>
+                <select id="q4-month" name="q4_month">
+                    <option value="">-- Selecione o mês --</option>
+                    <option value="01">Janeiro</option>
+                    <option value="02">Fevereiro</option>
+                    <option value="03">Março</option>
+                    <option value="04">Abril</option>
+                    <option value="05">Maio</option>
+                    <option value="06">Junho</option>
+                    <option value="07">Julho</option>
+                    <option value="08">Agosto</option>
+                    <option value="09">Setembro</option>
+                    <option value="10">Outubro</option>
+                    <option value="11">Novembro</option>
+                    <option value="12">Dezembro</option>
+                </select>
             </div>
 
             <button type="submit">Enviar Respostas</button>
@@ -86,7 +109,11 @@
 
         <div id="captcha-questions">
             <p><strong>Questão 1:</strong> Qual o ano de nascimento de Hilda?</p>
-            <input type="text" id="captcha-q1" placeholder="Ano">
+            <div id="captcha-q1-options">
+                <label><input type="radio" name="captcha_q1" value="1920"> 1920</label>
+                <label><input type="radio" name="captcha_q1" value="1930"> 1930</label>
+                <label><input type="radio" name="captcha_q1" value="1940"> 1940</label>
+            </div>
 
             <p><strong>Questão 2:</strong> Cite dois gêneros que ela explorou.</p>
             <select id="captcha-q2-1">
@@ -162,4 +189,4 @@
 
     <script src="app.js"></script>
 </body>
-</html>
+    </html>
