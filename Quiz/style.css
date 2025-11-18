@@ -1,20 +1,19 @@
 body {
-    font-family: 'Old Standard TT', serif; /* Fonte mais antiga */
+    font-family: 'Old Standard TT', serif; 
     background-color: #f0f0f0;
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
     margin: 0;
-    /* Efeito de papel antigo no fundo */
-    background-image: url('https://www.transparenttextures.com/patterns/old-map.png'); /* Exemplo de textura */
-    background-color: #f8e7c1; /* Cor de base de papel antigo */
-    color: #3e2723; /* Cor de texto mais escura */
+    background-image: url('https://www.transparenttextures.com/patterns/old-map.png'); 
+    background-color: #f8e7c1;
+    color: #3e2723;
 }
 
 h2, h3 {
-    font-family: 'Cormorant Garamond', serif; /* Fonte para títulos */
-    color: #5d4037; /* Cor de título */
+    font-family: 'Cormorant Garamond', serif; 
+    color: #5d4037; 
     text-align: center;
     border-bottom: 1px solid #c7b39b;
     padding-bottom: 10px;
@@ -22,65 +21,63 @@ h2, h3 {
 }
 
 .screen {
-    display: none; /* Esconde todas as telas */
-    background-color: #fdfaf5; /* Cor de papel mais clara para a tela */
+    display: none; 
+    background-color: #fdfaf5; 
     padding: 30px 40px;
-    border-radius: 5px; /* Bordas menos arredondadas */
-    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2); /* Sombra mais pronunciada */
+    border-radius: 5px; 
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2); 
     width: 90%;
     max-width: 600px;
-    border: 1px solid #d4c1a7; /* Borda sutil */
-    /* Efeito de papel antigo na tela */
-    background-image: url('https://www.transparenttextures.com/patterns/paper.png'); /* Outra textura */
+    border: 1px solid #d4c1a7; 
+    background-image: url('https://www.transparenttextures.com/patterns/paper.png');
 }
 
 .screen.active {
-    display: block; /* Mostra apenas a tela ativa */
+    display: block; 
 }
 
 input[type="text"],
 input[type="password"],
-input[type="date"],
 input[type="url"],
-input[type="number"], /* Adicionado estilo para input de número */
+input[type="number"],
 select {
     width: 100%;
     padding: 10px;
     margin: 10px 0;
     box-sizing: border-box; 
-    border: 1px solid #a1887f; /* Borda mais escura */
-    border-radius: 3px; /* Bordas sutis */
-    background-color: #fffdf5; /* Cor de fundo para inputs */
+    border: 1px solid #a1887f; 
+    border-radius: 3px; 
+    background-color: #fffdf5; 
     color: #3e2723;
     font-family: 'Old Standard TT', serif;
 }
 
 button {
-    background-color: #795548; /* Tom marrom para botões */
+    background-color: #795548; 
     color: white;
     padding: 12px 20px;
     border: none;
     border-radius: 3px;
     cursor: pointer;
-    font-size: 1rem; /* Tamanho da fonte relativo */
+    font-size: 1rem; 
     margin: 5px;
-    transition: background-color 0.3s ease; /* Transição suave */
+    transition: background-color 0.3s ease; 
     font-family: 'Cormorant Garamond', serif;
     font-weight: bold;
 }
 
 button:hover {
-    background-color: #5d4037; /* Tom mais escuro no hover */
+    background-color: #5d4037;
 }
 
 .error {
-    color: #c62828; /* Vermelho mais forte */
+    color: #c62828; 
     font-size: 0.9em;
 }
 
 .question {
     margin-bottom: 20px;
-    border-bottom: 1px dashed #d4c1a7; /* Linha tracejada */
+    border-bottom: 1px dashed #d4c1a7; 
     padding-bottom: 15px;
 }
 
@@ -130,7 +127,7 @@ button:hover {
 }
 
 .captcha-btn {
-    background-color: #a1887f; /* Tom cinza-marrom */
+    background-color: #a1887f; 
     margin: 5px;
     padding: 10px 15px;
 }
@@ -140,7 +137,7 @@ button:hover {
 }
 
 .captcha-btn.selected {
-    background-color: #4caf50; /* Verde, mas com tom um pouco mais fechado */
+    background-color: #4caf50; 
     border: 2px solid #388e3c;
     color: white;
 }
@@ -151,27 +148,7 @@ button:hover {
     border-top: 1px dashed #d4c1a7;
 }
 
-#admin-hint-requests li {
-    padding: 10px;
-    background-color: #fefaf0;
-    border: 1px solid #d4c1a7;
-    margin-bottom: 8px;
-    cursor: pointer;
-    border-radius: 3px;
-    color: #3e2723;
-}
-
-#admin-hint-requests li:hover {
-    background-color: #f5f0e1;
-}
-
-#admin-hint-requests li.selected {
-    background-color: #795548;
-    color: white;
-    font-weight: bold;
-}
-
-/* MODIFICADO: Estilos para pré-visualização do avatar */
+/* Pré-visualização do avatar */
 .avatar-preview-container {
     margin: 20px 0;
     text-align: center;
@@ -189,7 +166,7 @@ button:hover {
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid #d4c1a7;
-    background-color: #f0f0f0; /* Fundo caso a imagem quebre */
+    background-color: #f0f0f0; 
 }
 
 /* Estilo para a tabela do placar */
@@ -223,7 +200,7 @@ button:hover {
 }
 
 #top-3-list {
-    list-style-type: decimal; /* Números para a lista */
+    list-style-type: decimal;
     padding-left: 20px;
     margin-bottom: 25px;
 }
@@ -234,9 +211,6 @@ button:hover {
     color: #5d4037;
     margin-bottom: 5px;
 }
-
-
-/* --- NOVOS ESTILOS ADICIONADOS --- */
 
 /* Estilos para seleção de cor */
 #color-swatch-container {
@@ -252,7 +226,7 @@ button:hover {
     border-radius: 50%;
     margin: 5px;
     cursor: pointer;
-    border: 2px solid #fdfaf5; /* Cor de fundo da tela */
+    border: 2px solid #fdfaf5; 
     box-shadow: 0 1px 3px rgba(0,0,0,0.2);
     transition: all 0.2s ease;
 }
@@ -262,7 +236,7 @@ button:hover {
 }
 
 .color-swatch.selected {
-    border: 3px solid #795548; /* Cor de destaque */
+    border: 3px solid #795548; 
     transform: scale(1.15);
     box-shadow: 0 2px 5px rgba(0,0,0,0.3);
 }
@@ -273,3 +247,172 @@ button:hover {
     margin-right: 15px;
     font-weight: normal;
 }
+
+.chat-toggle-btn {
+    width: 100%;
+    margin-top: 15px;
+    background-color: #0288d1; /* Azul para destaque */
+}
+
+/* ------------------------------------------- */
+/* --- NOVOS ESTILOS PARA O CHAT --- */
+/* ------------------------------------------- */
+
+/* Modal de Chat (Jogador) */
+.chat-modal {
+    display: none; /* Escondido por padrão */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.6); /* Fundo escuro */
+    justify-content: center;
+    align-items: center;
+}
+
+.chat-modal-content {
+    background-color: #fefaf5;
+    padding: 20px;
+    border: 1px solid #d4c1a7;
+    border-radius: 5px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    position: relative;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.close-btn {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    cursor: pointer;
+}
+
+.chat-messages-container {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 10px;
+    border: 1px solid #d4c1a7;
+    border-radius: 3px;
+    margin-bottom: 10px;
+    background-color: #fffdf5;
+    max-height: 50vh;
+    min-height: 150px;
+}
+
+.chat-message {
+    padding: 5px 10px;
+    margin-bottom: 8px;
+    border-radius: 15px;
+    max-width: 80%;
+    font-size: 0.9em;
+    line-height: 1.4;
+    word-wrap: break-word;
+}
+
+.player-message {
+    background-color: #e3f2fd; /* Azul claro */
+    align-self: flex-end;
+    margin-left: auto;
+    border-bottom-right-radius: 3px;
+    border: 1px solid #90caf9;
+}
+
+.admin-message {
+    background-color: #f0f4c3; /* Amarelo claro */
+    align-self: flex-start;
+    margin-right: auto;
+    border-bottom-left-radius: 3px;
+    border: 1px solid #cddc39;
+}
+
+.chat-placeholder {
+    text-align: center;
+    color: #795548;
+    font-style: italic;
+    margin-top: 50px;
+}
+
+.chat-input-area {
+    display: flex;
+}
+
+.chat-input-area input {
+    margin: 0;
+    margin-right: 5px;
+}
+
+.chat-input-area button {
+    padding: 8px 15px;
+    width: auto;
+    margin: 0;
+}
+
+/* Chat do Admin */
+.chat-admin-container {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.admin-chat-list {
+    flex-basis: 35%;
+    min-width: 150px;
+}
+
+.admin-chat-list p {
+    font-weight: bold;
+    margin: 5px 0;
+    color: #4e342e;
+}
+
+.admin-chat-list ul {
+    list-style: none;
+    padding: 0;
+    border: 1px solid #d4c1a7;
+    height: 300px;
+    overflow-y: auto;
+    background-color: #fffdf5;
+}
+
+.chat-entry {
+    padding: 8px 10px;
+    border-bottom: 1px solid #e0d1b9;
+    cursor: pointer;
+}
+
+.chat-entry:hover {
+    background-color: #f5f0e1;
+}
+
+.chat-entry.selected {
+    background-color: #795548;
+    color: white;
+    font-weight: bold;
+}
+
+.chat-entry.selected strong {
+    color: white !important; /* Sobrescreve a cor do nome */
+}
+
+.admin-chat-window {
+    flex-basis: 65%;
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-chat-window p {
+    font-weight: bold;
+    margin: 5px 0;
+    color: #4e342e;
+    }
