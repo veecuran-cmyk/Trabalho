@@ -1,6 +1,5 @@
 // --- CONFIGURAÇÃO DO FIREBASE ---
 // COLE AQUI O OBJETO firebaseConfig QUE VOCÊ COPIOU DO SEU PROJETO
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyBpsekaPa-W0N8WGROTPRS7e1PWqDpdqCc",
   authDomain: "hilda-572b9.firebaseapp.com",
@@ -32,9 +31,9 @@ const loginButton = document.getElementById('login-button');
 const loginError = document.getElementById('login-error');
 const joinGameButton = document.getElementById('join-game-button');
 const playerNameInput = document.getElementById('player-name');
-// MODIFICADO: Referências para o input de URL e preview
 const playerAvatarUrlInput = document.getElementById('player-avatar-url');
 const avatarPreview = document.getElementById('avatar-preview');
+const colorSwatchContainer = document.getElementById('color-swatch-container'); // NOVO
 const quizForm = document.getElementById('quiz-form');
 const captchaPlayerId = document.getElementById('captcha-player-id');
 const submitCaptchaButton = document.getElementById('submit-captcha');
@@ -53,11 +52,23 @@ const adminHintPrompt = document.getElementById('admin-hint-prompt');
 const adminSendHintButton = document.getElementById('admin-send-hint-button');
 
 // --- ESTADO GLOBAL ---
+const defaultAvatar = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTuz1HKNz1zEXryZ8_K0H7SNkZhpdGIAgNuHQ&s";
+
+// NOVO: Paleta de Cores
+const colorPalette = [
+    '#3e2723', '#d32f2f', '#c2185b', '#7b1fa2', '#512da8', '#303f9f',
+    '#1976d2', '#0288d1', '#0097a7', '#00796b', '#388e3c', '#689f38',
+    '#afb42b', '#fbc02d', '#ffa000', '#f57c00', '#e64a19', '#5d4037',
+    '#616161', '#455a64', '#000000'
+];
+let selectedColor = colorPalette[0]; // Cor padrão
+
 let currentPlayer = {
     id: null,
     name: null,
     score: 0,
-    avatar: null // Avatar URL
+    avatar: defaultAvatar, // MODIFICADO
+    color: selectedColor   // NOVO
 };
 let adminCurrentHintTarget = { playerId: null, requestId: null };
 let captchaQ3Answer = null;
@@ -85,41 +96,66 @@ loginButton.addEventListener('click', () => {
 
 // --- LÓGICA DO JOGADOR ---
 
-// NOVO: Listener para a pré-visualização do avatar
+// NOVO: Gerar as amostras de cores
+function populateColorSwatches() {
+    colorPalette.forEach((color, index) => {
+        const swatch = document.createElement('div');
+        swatch.classList.add('color-swatch');
+        swatch.style.backgroundColor = color;
+        swatch.dataset.color = color;
+        
+        if (index === 0) {
+            swatch.classList.add('selected'); // Seleciona a primeira cor por padrão
+        }
+
+        swatch.addEventListener('click', () => {
+            // Remove a seleção de todas
+            document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+            // Adiciona seleção à clicada
+            swatch.classList.add('selected');
+            // Atualiza a cor global
+            selectedColor = color;
+        });
+        
+        colorSwatchContainer.appendChild(swatch);
+    });
+}
+
+// MODIFICADO: Listener para a pré-visualização do avatar
 playerAvatarUrlInput.addEventListener('input', () => {
     const url = playerAvatarUrlInput.value.trim();
     if (url && (url.startsWith('http://') || url.startsWith('https://'))) {
         avatarPreview.src = url;
     } else {
-        avatarPreview.src = "https://via.placeholder.com/80/e0e0e0/000000?text=Avatar"; // Placeholder
+        avatarPreview.src = defaultAvatar; // Reseta para o padrão se for inválido
     }
 });
 
 // 2. Entrar no Jogo (MODIFICADO)
 joinGameButton.addEventListener('click', () => {
     const playerName = playerNameInput.value;
-    // Alterado: Obtém o valor do input de URL
-    const characterUrl = playerAvatarUrlInput.value.trim();
+    let characterUrl = playerAvatarUrlInput.value.trim(); // MODIFICADO
 
     if (playerName.trim() === '') {
         alert('Por favor, insira seu nome.');
         return;
     }
     
-    // Validação simples de URL
+    // MODIFICADO: Não é mais obrigatório. Se for inválido, usa o padrão.
     if (characterUrl === '' || (!characterUrl.startsWith('http://') && !characterUrl.startsWith('https://'))) {
-        alert('Por favor, insira um link de imagem válido (começando com http:// ou https://).');
-        return;
+        characterUrl = defaultAvatar;
     }
 
     currentPlayer.id = playerName.toLowerCase().replace(/\s/g, '_') + "_" + Date.now(); // ID único
     currentPlayer.name = playerName;
     currentPlayer.avatar = characterUrl; // Salva a URL do avatar
+    currentPlayer.color = selectedColor; // NOVO: Salva a cor
 
     // Salva o jogador no Firestore
     db.collection('players').doc(currentPlayer.id).set({
         name: playerName,
-        character: characterUrl, // Salva a URL do avatar
+        character: characterUrl,
+        color: currentPlayer.color, // NOVO
         score: 0,
         status: 'waiting'
     })
@@ -152,7 +188,7 @@ function listenForGameStart() {
         });
 }
 
-// 4. Enviar Quiz
+// 4. Enviar Quiz (MODIFICADO)
 quizForm.addEventListener('submit', (e) => {
     e.preventDefault();
     let score = 0;
@@ -164,7 +200,11 @@ quizForm.addEventListener('submit', (e) => {
     
     const q2Answer = document.getElementById('q2').value;
     const q3Answer = document.getElementById('q3').value;
-    const q4Answer = document.getElementById('q4').value;
+    
+    // MODIFICADO: Lógica da Questão 4
+    const q4Year = document.getElementById('q4-year').value;
+    const q4Month = document.getElementById('q4-month').value;
+    const q4Answer = q4Month ? `${q4Year}-${q4Month}` : q4Year; // Salva como "AAAA-MM" ou apenas "AAAA"
 
     currentPlayer.score = score;
 
@@ -179,7 +219,7 @@ quizForm.addEventListener('submit', (e) => {
     });
 });
 
-// 5. Lógica do CAPTCHA
+// 5. Lógica do CAPTCHA (MODIFICADO)
 captchaButtons.forEach(button => {
     button.addEventListener('click', () => {
         captchaButtons.forEach(btn => btn.classList.remove('selected'));
@@ -189,7 +229,10 @@ captchaButtons.forEach(button => {
 });
 
 submitCaptchaButton.addEventListener('click', () => {
-    const q1 = document.getElementById('captcha-q1').value;
+    // MODIFICADO: Lógica da Questão 1 do CAPTCHA
+    const q1_selected = document.querySelector('input[name="captcha_q1"]:checked');
+    const q1 = q1_selected ? q1_selected.value : null;
+    
     const q2_1 = document.getElementById('captcha-q2-1').value;
     const q2_2 = document.getElementById('captcha-q2-2').value;
     
@@ -219,7 +262,7 @@ submitCaptchaButton.addEventListener('click', () => {
     }
 });
 
-// 5b. Pedir Dica
+// 5b. Pedir Dica (MODIFICADO)
 requestHintButton.addEventListener('click', () => {
     currentPlayer.score -= 2; 
     db.collection('players').doc(currentPlayer.id).update({ 
@@ -229,6 +272,7 @@ requestHintButton.addEventListener('click', () => {
     db.collection('hintRequests').add({
         playerId: currentPlayer.id,
         playerName: currentPlayer.name,
+        playerColor: currentPlayer.color, // NOVO
         timestamp: new Date(),
         status: 'pending'
     });
@@ -305,6 +349,7 @@ backToAdminButton.addEventListener('click', () => {
     showScreen('admin-panel-screen');
 });
 
+// MODIFICADO: Carregar placar com cores
 async function loadScoreboard() {
     const top3List = document.getElementById('top-3-list');
     const fullBody = document.getElementById('full-scoreboard-body');
@@ -322,17 +367,18 @@ async function loadScoreboard() {
     let position = 1;
     snapshot.forEach(doc => {
         const player = doc.data();
+        const color = player.color || '#3e2723'; // Cor padrão
 
         if (position <= 3) {
             const li = document.createElement('li');
-            li.textContent = `${player.name} - ${player.score} pontos`;
+            li.innerHTML = `<span style="color: ${color}; font-weight: bold;">${player.name}</span> - ${player.score} pontos`;
             top3List.appendChild(li);
         }
 
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${position}</td>
-            <td>${player.name}</td>
+            <td><strong style="color: ${color};">${player.name}</strong></td>
             <td><img src="${player.character}" alt="avatar" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover;"></td>
             <td>${player.score}</td>
             <td>${player.status}</td>
@@ -355,6 +401,7 @@ function loadPlayersIntoAdminList() {
                 const option = document.createElement('option');
                 option.value = doc.id; 
                 option.textContent = player.name;
+                // Nota: Não é fácil estilizar <option> com cores, então mantemos simples.
                 adminPlayerList.appendChild(option);
             }
         });
@@ -395,7 +442,7 @@ adminPunishButton.addEventListener('click', () => {
 });
 
 
-// 4. Auxiliar Jogadores (Ouvir Pedidos)
+// 4. Auxiliar Jogadores (Ouvir Pedidos) (MODIFICADO)
 function listenForHintRequests() {
     db.collection('hintRequests').where('status', '==', 'pending').orderBy('timestamp')
         .onSnapshot(snapshot => {
@@ -404,8 +451,10 @@ function listenForHintRequests() {
         
         snapshot.forEach(doc => {
             const request = doc.data();
+            const color = request.playerColor || '#3e2723'; // Cor padrão
+            
             const li = document.createElement('li');
-            li.textContent = `Pedido de: ${request.playerName}`;
+            li.innerHTML = `Pedido de: <strong style="color: ${color};">${request.playerName}</strong>`; // Mostra nome com cor
             li.dataset.playerId = request.playerId; 
             li.dataset.requestId = doc.id; 
 
@@ -460,4 +509,5 @@ adminSendHintButton.addEventListener('click', () => {
 
 
 // --- INICIALIZAÇÃO ---
+populateColorSwatches(); // NOVO: Chama a função que cria as cores
 showScreen('login-screen'); // Mostra a tela de login ao carregar
