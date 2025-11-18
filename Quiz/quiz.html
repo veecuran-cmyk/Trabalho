@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hilda Hilst Game</title>
+    <title>PIEC Quiz Game</title>
     <link rel="stylesheet" href="style.css">
     
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&family=Old+Standard+TT&display=swap" rel="stylesheet">
@@ -15,37 +15,43 @@
 
     <div id="login-screen" class="screen active">
         <h2>Login</h2>
-        <input type="password" id="password-input" placeholder="Senha de Acesso">
+        <input type="password" id="password-input" placeholder="Senha">
         <button id="login-button">Entrar</button>
+        <a href="../index.html"><button id='login-button'>voltar</button>
+        </a>
         <p id="login-error" class="error"></p>
     </div>
 
     <div id="player-setup-screen" class="screen">
-        <h2>Criar Perfil</h2>
+        <h2>Configurar Perfil</h2>
         
-        <label>Seu Nome (ID):</label>
-        <input type="text" id="player-name" placeholder="Ex: Clarice">
+        <label for="player-name">Seu Nome (ID):</label>
+        <input type="text" id="player-name" placeholder="Ex: Maria">
         
-        <label>Link da Imagem (Avatar):</label>
-        <input type="url" id="player-avatar-url" placeholder="https://...">
+        <label for="player-avatar-url">Link para Imagem de Perfil (URL - Opcional):</label>
+        <input type="url" id="player-avatar-url" value="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTuz1HKNz1zEXryZ8_K0H7SNkZhpdGIAgNuHQ&s">
         
         <div class="avatar-preview-container">
-            <img id="avatar-preview" src="" alt="">
-            <p>Pré-visualização</p>
+            <p>Pré-visualização:</p>
+            <img id="avatar-preview" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTuz1HKNz1zEXryZ8_K0H7SNkZhpdGIAgNuHQ&s" alt="Avatar Preview">
         </div>
+
+        <label>Cor do Nome:</label>
+        <div id="color-swatch-container">
+            </div>
         
         <button id="join-game-button">Entrar no Jogo</button>
     </div>
 
     <div id="waiting-room-screen" class="screen">
         <h2>Sala de Espera</h2>
-        <p>Aguardando o administrador iniciar...</p>
+        <p>Aguardando o Administrador iniciar o jogo...</p>
         <div class="loader"></div>
-        <button class="open-chat-btn">💬 Falar com Admin</button>
+        <button id="open-chat-button" class="chat-toggle-btn">Falar com o Admin (Custa pontos!)</button>
     </div>
 
     <div id="game-screen" class="screen">
-        <h2>Quiz: Hilda Hilst</h2>
+        <h2>Quiz - Hilda Hilst</h2>
         <form id="quiz-form">
             
             <div class="question">
@@ -57,124 +63,155 @@
             </div>
 
             <div class="question">
-                <label>2. O que acontecia no Brasil durante sua escrita?</label>
-                <input type="text" id="q2" required>
+                <label for="q2">2. O que estava acontecendo no Brasil na época que Hilda estava escrevendo?</label>
+                <input type="text" id="q2" name="q2" required>
             </div>
 
             <div class="question">
-                <label>3. Três temáticas principais dos poemas:</label>
-                <input type="text" id="q3" placeholder="Ex: Morte, Amor, Deus" required>
+                <label for="q3">3. Qual eram as principais temáticas dos seus poemas? (Cite pelo menos 3)</label>
+                <input type="text" id="q3" name="q3" placeholder="Tema 1, Tema 2, Tema 3" required>
             </div>
 
             <div class="question">
-                <label>4. Data do início da carreira:</label>
-                <input type="date" id="q4" required>
+                <label for="q4-year">4. Qual o ano (e mês, opcional) do início de sua carreira?</label>
+                
+                <label for="q4-year" style="display: block; margin-top: 10px;">Ano (obrigatório):</label>
+                <input type="number" id="q4-year" name="q4_year" placeholder="Ex: 1950" required min="1900" max="2024">
+                
+                <label for="q4-month" style="display: block; margin-top: 10px;">Mês (opcional):</label>
+                <select id="q4-month" name="q4_month">
+                    <option value="">-- Selecione o mês --</option>
+                    <option value="01">Janeiro</option>
+                    <option value="02">Fevereiro</option>
+                    <option value="03">Março</option>
+                    <option value="04">Abril</option>
+                    <option value="05">Maio</option>
+                    <option value="06">Junho</option>
+                    <option value="07">Julho</option>
+                    <option value="08">Agosto</option>
+                    <option value="09">Setembro</option>
+                    <option value="10">Outubro</option>
+                    <option value="11">Novembro</option>
+                    <option value="12">Dezembro</option>
+                </select>
             </div>
 
             <button type="submit">Enviar Respostas</button>
         </form>
-        <button class="open-chat-btn" style="margin-top: 10px;">💬 Pedir Dica (Chat)</button>
+        <button id="open-chat-button-game" class="chat-toggle-btn">Falar com o Admin (Custa pontos!)</button>
     </div>
 
     <div id="captcha-screen" class="screen">
-        <h2>Etapa Final</h2>
-        <p>Para confirmar sua vitória, decifre o enigma.</p>
+        <h2>Você ganhou! Responda o CAPTCHA para concluir.</h2>
+        <p>Jogador: <strong id="captcha-player-id"></strong></p>
         
         <div class="captcha-text">
-            <p>"Hilda Hilst (1930-2004) viveu na Casa do Sol. Sua obra mistura poesia, prosa e teatro..."</p>
+            <p>"Hilda Hilst (1930-2004) foi uma das maiores escritoras do século XX. Sua obra, vasta e complexa, navegou entre a poesia, o teatro e a prosa. Frequentemente abordou o místico, o erótico e o escatológico, desafiando convenções sociais e literárias. Muitos a consideram 'maldita' por sua recusa em se enquadrar em padrões comerciais, vivendo reclusa na Casa do Sol."</p>
         </div>
 
         <div id="captcha-questions">
-            <p><strong>1. Ano de nascimento?</strong></p>
-            <input type="text" id="captcha-q1" placeholder="YYYY">
+            <p><strong>Questão 1:</strong> Qual o ano de nascimento de Hilda?</p>
+            <div id="captcha-q1-options">
+                <label><input type="radio" name="captcha_q1" value="1920"> 1920</label>
+                <label><input type="radio" name="captcha_q1" value="1930"> 1930</label>
+                <label><input type="radio" name="captcha_q1" value="1940"> 1940</label>
+            </div>
 
-            <p><strong>2. Selecione dois gêneros literários:</strong></p>
+            <p><strong>Questão 2:</strong> Cite dois gêneros que ela explorou.</p>
             <select id="captcha-q2-1">
-                <option value="">-- Selecione --</option>
+                <option value="">Gênero 1</option>
                 <option value="poesia">Poesia</option>
+                <option value="romance">Romance</option>
                 <option value="teatro">Teatro</option>
                 <option value="prosa">Prosa</option>
             </select>
             <select id="captcha-q2-2">
-                <option value="">-- Selecione --</option>
+                <option value="">Gênero 2</option>
                 <option value="poesia">Poesia</option>
+                <option value="romance">Romance</option>
                 <option value="teatro">Teatro</option>
                 <option value="prosa">Prosa</option>
             </select>
 
-            <p><strong>3. Onde ela vivia?</strong></p>
-            <div style="display: flex; gap: 5px; justify-content: center;">
-                <button type="button" class="captcha-btn" data-answer="Casa do Sol">Casa do Sol</button>
-                <button type="button" class="captcha-btn" data-answer="São Paulo">São Paulo</button>
-            </div>
+            <p><strong>Questão 3:</strong> Onde ela vivia reclusa?</p>
+            <button class="captcha-btn" data-answer="Casa do Sol">Casa do Sol</button>
+            <button class="captcha-btn" data-answer="Rio de Janeiro">Rio de Janeiro</button>
+            <button class="captcha-btn" data-answer="São Paulo">São Paulo</button>
         </div>
 
-        <button id="submit-captcha">Finalizar Jogo</button>
-        <button class="open-chat-btn">💬 Ajuda do Admin</button>
+        <button id="submit-captcha">Concluir CAPTCHA</button>
     </div>
 
     <div id="scoreboard-screen" class="screen">
         <h2>Placar Final</h2>
-        
-        <div class="top3-container">
-            <h3>🏆 Top 3</h3>
-            <ol id="top-3-list"></ol>
-        </div>
-
-        <h3>Classificação Geral</h3>
+        <h3>Top 3</h3>
+        <ol id="top-3-list">
+            </ol>
+        <h3>Todos os Jogadores</h3>
         <table id="full-scoreboard">
             <thead>
                 <tr>
-                    <th>Pos</th>
+                    <th>Posição</th>
+                    <th>Jogador</th>
                     <th>Avatar</th>
-                    <th>Nome</th>
                     <th>Pontos</th>
                     <th>Status</th>
                 </tr>
             </thead>
-            <tbody id="full-scoreboard-body"></tbody>
+            <tbody id="full-scoreboard-body">
+                </tbody>
         </table>
-        <button id="back-to-admin" style="display:none;">Voltar ao Admin</button>
+        <button id="back-to-admin">Voltar (Admin)</button>
     </div>
 
     <div id="admin-panel-screen" class="screen">
-        <h2>Painel do Administrador</h2>
-        
-        <div class="admin-row">
-            <button id="start-game-button">▶ Iniciar Jogo</button>
-            <button id="view-scoreboard-button">📊 Ver Placar</button>
-        </div>
+        <h2>Modo Administrador</h2>
+        <button id="start-game-button">1. Iniciar o Jogo</button>
+        <button id="view-scoreboard-button">2. Acompanhar Placar</button>
         
         <div class="admin-section">
-            <h3>Gerenciamento de Jogadores</h3>
-            <p>Selecione um jogador para interagir:</p>
+            <h3>3. Gerenciar Jogadores</h3>
             <select id="admin-player-list">
-                <option value="">Carregando...</option>
+                <option value="">Selecione um jogador</option>
             </select>
+            <button id="admin-ban-button" style="background-color: #c62828;">Deletar Conta Permanente</button> 
+            <button id="admin-punish-button">Punir (-5 pontos)</button>
+        </div>
 
-            <div class="admin-actions">
-                <button id="admin-open-chat-button" class="action-btn chat">💬 Abrir Chat</button>
-                <button id="admin-punish-button" class="action-btn punish">⚠️ Punir (-5)</button>
-                <button id="admin-ban-button" class="action-btn ban">🚫 BANIR (Excluir)</button>
+        <div id="admin-chat-section" class="admin-section">
+            <h3>4. Chat de Suporte (Dicas)</h3>
+            <div class="chat-admin-container">
+                <div class="admin-chat-list">
+                    <p>Chats Ativos:</p>
+                    <ul id="admin-active-chats-list">
+                        </ul>
+                </div>
+                <div class="admin-chat-window">
+                    <p>Conversa:</p>
+                    <div id="admin-chat-messages-container" class="chat-messages-container">
+                        <p class="chat-placeholder">Selecione um chat para começar a conversar.</p>
+                    </div>
+                    <input type="text" id="admin-chat-input" placeholder="Digite sua resposta..." disabled>
+                    <button id="admin-send-chat-message-button" disabled>Enviar</button>
+                </div>
             </div>
         </div>
     </div>
 
-    <div id="chat-modal" class="chat-overlay hidden">
-        <div class="chat-box">
-            <div class="chat-header">
-                <span id="chat-header-title">Chat</span>
-                <button id="close-chat-btn">✕</button>
-            </div>
-            <div id="chat-messages" class="chat-messages">
+    <div id="chat-modal" class="chat-modal">
+        <div class="chat-modal-content">
+            <span id="close-chat-modal-button" class="close-btn">&times;</span>
+            <h3>Chat de Ajuda (Admin)</h3>
+            <p>A primeira mensagem custará 2 pontos. Mantenha o respeito.</p>
+            <div id="chat-messages-container" class="chat-messages-container">
                 </div>
             <div class="chat-input-area">
                 <input type="text" id="chat-input" placeholder="Digite sua mensagem...">
-                <button id="chat-send-btn">Enviar</button>
+                <button id="send-chat-message-button">Enviar</button>
             </div>
         </div>
     </div>
 
     <script src="app.js"></script>
 </body>
-            </html>
+</html>
